@@ -1,16 +1,16 @@
-<!-- lets import tailwindcss -->
-
+<!-- create a header use tailwindcss and vue -->
 <template>
-  <header class="header">
-    <nav>
-      <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">World</a></li>
-        <li><a href="#">Tech</a></li>
-        <li><a href="#">Sports</a></li>
-      </ul>
-    </nav>
-    <input type="text" placeholder="Search news..." />
+  <header class="bg-blue-600 text-white p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">My Application</h1>
+      <nav>
+        <ul class="flex space-x-4">
+          <li><a href="#" class="hover:underline">Home</a></li>
+          <li><a href="#" class="hover:underline">About</a></li>
+          <li><a href="#" class="hover:underline">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
   </header>
 </template>
 
@@ -20,23 +20,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.header {
-  display: flex;
-  justify-content: space-between;
-  padding: 1em;
-  background: #333;
-  color: black;
-  background-color: black;
-}
-nav ul {
-  display: flex;
-  list-style: none;
-}
-nav ul li {
-  margin-right: 1em;
-}
-input {
-  padding: 0.5em;
-}
-</style>
+

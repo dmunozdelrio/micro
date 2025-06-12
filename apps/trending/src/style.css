@@ -1,11 +1,1 @@
-.trending {
-  padding: 1rem;
-  background-color: #f5f5f5;
-}
-.trending ul {
-  list-style: none;
-  padding: 0;
-}
-.trending li {
-  margin-bottom: 0.5rem;
-}
+@import "tailwindcss";

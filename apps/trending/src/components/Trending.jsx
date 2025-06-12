@@ -7,17 +7,19 @@ const Trending = () => {
   ];
 
   return (
-    <section className="trending">
-      <h2>Trending News</h2>
-      <ul>
+// haz un componente Trending que muestre una lista de artículos populares disenalo con tailwind
+
+    <section className="p-4 bg-gray-100">
+      <h2 className="text-xl font-bold mb-2">Trending News</h2>
+      <ul className="list-disc pl-5">
         {articles.map((article) => (
-          <li key={article.id}>
-            <h3>{article.title}</h3>
-            <p>{article.summary}</p>
+          <li key={article.id} className="mb-2">
+            <h3 className="font-semibold">{article.title}</h3>
+            <p className="text-gray-600">{article.summary}</p>
           </li>
         ))}
       </ul>
-    </section>
+    </section>  
   );
 };
 
