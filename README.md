@@ -24,6 +24,9 @@ npm install
 npm run build
 ```
 
+> **Note:** After modifying any source files or CSS in `header` or `trending`,
+> run `npm run build` inside each app again before serving the host.
+
 ## Step 3 : Build and run the Shell
 
 ```bash
