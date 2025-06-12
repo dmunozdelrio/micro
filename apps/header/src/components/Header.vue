@@ -1,3 +1,5 @@
+<!-- lets import tailwindcss -->
+
 <template>
   <header class="header">
     <nav>
@@ -24,7 +26,8 @@ export default {
   justify-content: space-between;
   padding: 1em;
   background: #333;
-  color: white;
+  color: black;
+  background-color: black;
 }
 nav ul {
   display: flex;
