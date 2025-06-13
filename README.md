@@ -4,7 +4,10 @@ This repository is linked to this article [MFE](https://dev.to/mairouche/setup-a
 The `host/` folder contains the Micro Frontend Shell with Vite Vanilla.
 The `apps/` folder contains the microfrontends modules (angular is not working at this stage but will be added in a later commit).
 
-Each of these folders is a standalone npm package with its own `package.json`. The repository root does not contain a `package.json`, so running npm commands from the root directory will fail. Make sure to run all npm scripts inside the relevant package folder (`apps/header`, `apps/trending` or `host`).
+Each of these folders is a standalone npm package with its own `package.json`. The repository root does **not** contain a `package.json`.
+
+> **Warning**
+> Running `npm` commands from the root directory will fail. Always navigate to the correct package folder (`apps/header`, `apps/trending` or `host`) before installing dependencies or running scripts.
 
 To start the application, follow the steps.
 
@@ -36,3 +39,18 @@ npm run dev
 ```
 
 Finally, you'll be able to see our micro frontend overall application on http://localhost:3000/
+
+---
+
+## Docker orchestration
+
+If you prefer to run the entire host inside a container, use the included Dockerfile and service in `docker-compose.yml`.
+
+```bash
+docker-compose up --build host
+```
+
+This command compiles `header`, `trending`, and the host in a multi-stage build, then serves the `dist` folder on port `3000`.
+
+> **Tip**
+> The development server uses port `5173` (see `host/vite.config.js`), but the Docker container exposes `3000` for consistency with the other services.

@@ -68,3 +68,9 @@ services:
     build: ./services/swift-notifications
     ports:
       - "3017:3017"
+  host:
+    build: ./host
+    ports:
+      - "3000:3000"
+    depends_on:
+      - node-notifications
