@@ -1,0 +1,74 @@
+version: '3.8'
+services:
+  postgres:
+    build: ../dbs/postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../dbs/volumes/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: example
+
+  mongo:
+    build: ../dbs/mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ../dbs/volumes/mongo:/data/db
+
+  mysql:
+    build: ../dbs/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - ../dbs/volumes/mysql:/var/lib/mysql
+
+  redis:
+    build: ../dbs/redis
+    ports:
+      - "6379:6379"
+
+  clickhouse:
+    build: ../dbs/clickhouse
+    ports:
+      - "9000:9000"
+      - "8123:8123"
+
+  rabbitmq:
+    build: ../tools/messaging-rabbitmq
+    ports:
+      - "5672:5672"
+
+  prometheus:
+    build: ../tools/observability/prometheus
+    ports:
+      - "9090:9090"
+
+  loki:
+    build: ../tools/observability/loki
+    ports:
+      - "3100:3100"
+
+  grafana:
+    build: ../tools/observability/grafana
+    ports:
+      - "3030:3000"
+
+  mlflow:
+    build: ../tools/mlflow
+    ports:
+      - "5000:5000"
+
+  minio:
+    build: ../tools/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  airflow:
+    build: ../tools/airflow
+    ports:
+      - "8080:8080"

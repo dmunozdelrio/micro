@@ -1,0 +1,76 @@
+version: '3.8'
+services:
+  clojure-etl:
+    build: ../services/clojure-etl
+    ports:
+      - "3013:3013"
+  cpp-hardware:
+    build: ../services/cpp-hardware
+    ports:
+      - "3014:3014"
+  crystal-iot:
+    build: ../services/crystal-iot
+    ports:
+      - "3016:3016"
+  deno-functions:
+    build: ../services/deno-functions
+    ports:
+      - "3015:3015"
+  dotnet-identity:
+    build: ../services/dotnet-identity
+    ports:
+      - "3006:3006"
+  elixir-messaging:
+    build: ../services/elixir-messaging
+    ports:
+      - "3009:3009"
+  go-gateway:
+    build: ../services/go-gateway
+    ports:
+      - "3003:3003"
+  haskell-compliance:
+    build: ../services/haskell-compliance
+    ports:
+      - "3012:3012"
+  java-accounting:
+    build: ../services/java-accounting
+    ports:
+      - "3005:3005"
+  kotlin-orders:
+    build: ../services/kotlin-orders
+    ports:
+      - "3010:3010"
+  node-notifications:
+    build: ../services/node-notifications
+    ports:
+      - "3001:3001"
+  php-ecommerce:
+    build: ../services/php-ecommerce
+    ports:
+      - "3004:3004"
+  python-forecast:
+    build: ../services/python-forecast
+    ports:
+      - "3002:3002"
+  ruby-crm:
+    build: ../services/ruby-crm
+    ports:
+      - "3008:3008"
+  rust-analytics:
+    build: ../services/rust-analytics
+    ports:
+      - "3007:3007"
+  scala-reporting:
+    build: ../services/scala-reporting
+    ports:
+      - "3011:3011"
+  swift-notifications:
+    build: ../services/swift-notifications
+    ports:
+      - "3017:3017"
+  host:
+    build: ../host
+    ports:
+      - "3000:3000"
+    depends_on:
+      - node-notifications

@@ -1,0 +1,56 @@
+version: '3.8'
+services:
+  identity-keycloak:
+    build: ../tools/identity-keycloak
+    ports:
+      - "8080:8080"
+  messaging-rabbitmq:
+    build: ../tools/messaging-rabbitmq
+    ports:
+      - "5672:5672"
+  cms-strapi:
+    build: ../tools/cms-strapi
+    ports:
+      - "1337:1337"
+  ecommerce-vendure:
+    build: ../tools/ecommerce-vendure
+    ports:
+      - "3009:3009"
+  search-meilisearch:
+    build: ../tools/search-meilisearch
+    ports:
+      - "7700:7700"
+  workflow-camunda:
+    build: ../tools/workflow-camunda
+    ports:
+      - "8081:8080"
+  analytics-superset:
+    build: ../tools/analytics-superset
+    ports:
+      - "8088:8088"
+  mlflow:
+    build: ../tools/mlflow
+    ports:
+      - "5000:5000"
+  minio:
+    build: ../tools/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+  airflow:
+    build: ../tools/airflow
+    ports:
+      - "8080:8080"
+  observability-prometheus:
+    build: ../tools/observability/prometheus
+    ports:
+      - "9090:9090"
+  observability-loki:
+    build: ../tools/observability/loki
+    ports:
+      - "3100:3100"
+  observability-grafana:
+    build: ../tools/observability/grafana
+    ports:
+      - "3030:3000"

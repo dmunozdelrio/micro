@@ -1,0 +1,18 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [python-forecast, node-notifications]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build ${{ matrix.service }}
+        run: |
+          docker build -t ${{ matrix.service }} services/${{ matrix.service }}

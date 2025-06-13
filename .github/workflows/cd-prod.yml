@@ -1,0 +1,15 @@
+name: Deploy Prod
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://example.com
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy with Helm
+        run: echo "Helm deploy would run here"
