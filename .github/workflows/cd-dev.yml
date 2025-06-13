@@ -1,0 +1,12 @@
+name: Deploy Dev
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker Compose Up
+        run: docker compose -f deploy/docker-compose.core.yml -f deploy/docker-compose.services.yml up -d --build

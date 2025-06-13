@@ -54,3 +54,19 @@ This command compiles `header`, `trending`, and the host in a multi-stage build,
 
 > **Tip**
 > The development server uses port `5173` (see `host/vite.config.js`), but the Docker container exposes `3000` for consistency with the other services.
+
+## ERP Integration
+
+The repository now includes Docker compose files under `deploy/` for databases, services and tooling. Microservices live under `services/` while auxiliary containers (Keycloak, RabbitMQ, MLflow, etc.) are provided in `tools/`. A mapping of each service to its database can be found in `docs/databases-map.md`.
+
+CI workflows reside in `.github/workflows/` and a placeholder `apps/backend` directory has been added for future backend modules.
+
+### Running with Docker Compose
+
+To start core infrastructure and services locally:
+
+```bash
+docker compose -f deploy/docker-compose.core.yml -f deploy/docker-compose.services.yml up -d
+```
+
+Add `-f deploy/docker-compose.tools.yml` to include optional tooling such as Keycloak and Airflow.
