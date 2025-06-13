@@ -1,4 +1,3 @@
-import React from 'react';
 
 const Trending = () => {
   const articles = [
@@ -7,7 +6,7 @@ const Trending = () => {
   ];
 
   return (
-// haz un componente Trending que muestre una lista de artículos populares disenalo con tailwind
+  // Trending component that displays a list of popular articles styled with Tailwind
 
     <section className="p-4 bg-gray-100">
       <h2 className="text-xl font-bold mb-2">Trending News</h2>
