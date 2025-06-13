@@ -59,6 +59,8 @@ This command compiles `header`, `trending`, and the host in a multi-stage build,
 
 The repository now includes Docker compose files under `deploy/` for databases, services and tooling. Microservices live under `services/` while auxiliary containers (Keycloak, RabbitMQ, MLflow, etc.) are provided in `tools/`. A mapping of each service to its database can be found in `docs/databases-map.md`.
 
+All Compose files now follow the Compose V2 schema and omit the top-level `version:` key.
+
 CI workflows reside in `.github/workflows/` and a placeholder `apps/backend` directory has been added for future backend modules.
 
 ### Running with Docker Compose
