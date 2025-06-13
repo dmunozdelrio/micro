@@ -1,8 +1,11 @@
 # ---- Build Stage ----
-FROM hexpm/elixir:1.16.2-erlang-26.2.1-alpine-3.18 AS build
+FROM hexpm/elixir:1.14.5-erlang-24.2.2-debian-bullseye-20250610-slim AS build
 WORKDIR /app
 
-RUN apk add --no-cache build-base git
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       build-essential git \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY mix.exs mix.lock ./
 COPY config ./config
@@ -16,8 +19,11 @@ COPY lib ./lib
 RUN MIX_ENV=prod mix release
 
 # ---- Release Stage ----
-FROM alpine:3.18 AS app
-RUN apk add --no-cache openssl ncurses-libs
+FROM debian:bullseye-slim AS app
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       openssl libncurses5 \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 COPY --from=build /app/_build/prod/rel/messaging ./
