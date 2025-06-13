@@ -1,5 +1,5 @@
 # Build stage
-FROM gradle:8.4-jdk21-temurin AS build
+FROM gradle:8-jdk21-ubi AS build
 WORKDIR /workspace
 COPY . .
 RUN gradle installDist
