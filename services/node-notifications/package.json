@@ -1,0 +1,12 @@
+{
+  "name": "node-notifications",
+  "version": "1.0.0",
+  "description": "Notification service for micro frontend demo",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
