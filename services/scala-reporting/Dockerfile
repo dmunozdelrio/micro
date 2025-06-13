@@ -1,4 +1,4 @@
-FROM hseeberger/scala-sbt:11.0.19_1.8.0_2.13.12 AS build
+FROM hseeberger/scala-sbt:11.0.14.1_1.6.2_2.13.8 AS build
 WORKDIR /app
 COPY build.sbt .
 RUN mkdir -p src/main/scala
