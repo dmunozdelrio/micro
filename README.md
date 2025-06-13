@@ -2,7 +2,7 @@
 
 This repository is linked to this article [MFE](https://dev.to/mairouche/setup-a-micro-frontend-architecture-in-15min-with-vite-4pbg).
 The `host/` folder contains the Micro Frontend Shell with Vite Vanilla.
-The `apps/` folder contains the microfrotends modules (angular is not working at this stage but will be added in a later commit).
+The `apps/` folder contains the microfrontends modules (angular is not working at this stage but will be added in a later commit).
 
 Each of these folders is a standalone npm package with its own `package.json`. The repository root does not contain a `package.json`, so running npm commands from the root directory will fail. Make sure to run all npm scripts inside the relevant package folder (`apps/header`, `apps/trending` or `host`).
 
