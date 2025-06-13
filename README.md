@@ -70,3 +70,7 @@ docker compose -f deploy/docker-compose.core.yml -f deploy/docker-compose.servic
 ```
 
 Add `-f deploy/docker-compose.tools.yml` to include optional tooling such as Keycloak and Airflow.
+
+### VoIP Integration Roadmap
+
+The [`docs/voip-roadmap.md`](docs/voip-roadmap.md) document provides a forward-thinking plan to deploy a self-hosted voice service alongside the existing microservices. It covers PoC steps, the MVP architecture and long term scaling ideas.
