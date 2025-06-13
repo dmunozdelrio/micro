@@ -1,0 +1,5 @@
+name: crystal-iot
+version: 0.1.0
+targets:
+  crystal-iot:
+    main: src/crystal-iot.cr

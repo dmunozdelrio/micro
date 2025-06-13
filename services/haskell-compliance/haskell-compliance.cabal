@@ -1,0 +1,10 @@
+cabal-version: 2.4
+name: haskell-compliance
+version: 0.1.0.0
+executable haskell-compliance
+  main-is: Main.hs
+  build-depends: base >=4.7 && <5,
+                 wai,
+                 warp,
+                 http-types
+  default-language: Haskell2010
