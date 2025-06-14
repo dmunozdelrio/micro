@@ -10,7 +10,10 @@ RUN shards install --production \
 FROM alpine:3.18 AS app
 WORKDIR /app
 
-
+# Copy the compiled binary from the build stage
+COPY --from=build /app/bin/crystal-iot ./crystal-iot
+# Ensure the binary is executable
+RUN chmod +x ./crystal-iot
 
 EXPOSE 3016
 CMD ["./crystal-iot"]
