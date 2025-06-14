@@ -39,4 +39,4 @@ ENV GEM_HOME=/usr/src/app/vendor/bundle \
 
 EXPOSE 3008
 
-CMD ["ruby", "app.rb"]
+CMD ["bundle", "exec", "ruby", "app.rb"]

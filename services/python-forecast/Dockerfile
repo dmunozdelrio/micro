@@ -12,6 +12,11 @@ COPY pyproject.toml poetry.lock /app/
 RUN poetry config virtualenvs.create false \
     && poetry install --without dev --no-interaction --no-ansi
 
+# Reinstall to include newly added uvicorn dependency
+RUN poetry install --no-dev --no-interaction --no-ansi
+# Reinstall to include FastAPI
+RUN poetry install --no-dev --no-interaction --no-ansi
+
 # Copia el código fuente
 COPY src ./src
 
