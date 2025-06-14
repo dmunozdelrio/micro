@@ -1,19 +1,12 @@
-name: app
-version: 0.1.0
+name: crystal-iot
+version: "0.1.0"
+license: MIT
 
-# authors:
-#   - name <email@example.com>
+targets:
+  crystal-iot:
+    main: "src/main.cr"
 
-# description: |
-#   Short description of app
-
-# dependencies:
-#   pg:
-#     github: will/crystal-pg
-#     version: "~> 0.5"
-
-# development_dependencies:
-#   webmock:
-#     github: manastech/webmock.cr
-
-# license: MIT
+dependencies:
+  kemal:
+    github: kemalcr/kemal
+    version: "~> 1.3.0"

@@ -1,14 +1,18 @@
-FROM python:3.11-slim
+FROM python:3.8-slim
 
 WORKDIR /app
 
-# Install Poetry
+# Instala Poetry
 RUN pip install --no-cache-dir poetry
 
-COPY pyproject.toml poetry.lock* /app/
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-dev --no-interaction --no-ansi
+# Copia config y lock file
+COPY pyproject.toml poetry.lock /app/
 
+# Instala solo dependencias de producción (excluye grupo dev)
+RUN poetry config virtualenvs.create false \
+    && poetry install --without dev --no-interaction --no-ansi
+
+# Copia el código fuente
 COPY src ./src
 
 EXPOSE 3002

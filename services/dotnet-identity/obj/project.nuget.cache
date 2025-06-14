@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "p8SgrNu+SFM=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\development\\Documents\\GitHub\\micro\\services\\dotnet-identity\\dotnet-identity.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\development\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.17\\microsoft.netcore.app.ref.8.0.17.nupkg.sha512",
+    "C:\\Users\\development\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.17\\microsoft.windowsdesktop.app.ref.8.0.17.nupkg.sha512",
+    "C:\\Users\\development\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.17\\microsoft.aspnetcore.app.ref.8.0.17.nupkg.sha512",
+    "C:\\Users\\development\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.17\\microsoft.netcore.app.host.win-x64.8.0.17.nupkg.sha512"
+  ],
+  "logs": []
+}

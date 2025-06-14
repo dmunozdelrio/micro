@@ -1,75 +1,525 @@
+networks:
+  micro_services_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mysql_data:
+  mongo_data:
+  clickhouse_data:
+  redis_data:
+  minio_data:
+  meilisearch_data:
+  airflow_dags:
+  airflow_logs:
+  airflow_plugins:
+
 services:
-  clojure-etl:
-    build: ./services/clojure-etl
+  #--------------------------------------------------------------------------
+  # Applications (Frontends & Backend)
+  #--------------------------------------------------------------------------
+  header:
+    container_name: header_app
+    build:
+      context: ./apps/header
     ports:
-      - "3013:3013"
-  cpp-hardware:
-    build: ./services/cpp-hardware
+      - "5173:5173" # Assuming Vite default port
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # depends_on:
+    #   - go-gateway # or your main backend API
+
+  trending:
+    container_name: trending_app
+    build:
+      context: ./apps/trending
     ports:
-      - "3014:3014"
-  crystal-iot:
-    build: ./services/crystal-iot
+      - "5174:5173" # Assuming Vite default port, mapped to different host port
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # depends_on:
+    #   - go-gateway # or your main backend API
+
+  host_app: # Renamed from 'host' to avoid conflict if there's a 'host' network mode
+    container_name: host_frontend_app
+    build:
+      context: .
+      dockerfile: host/Dockerfile
     ports:
-      - "3016:3016"
-  deno-functions:
-    build: ./services/deno-functions
+      - "5175:3000" # Adjusted to match the Dockerfile's EXPOSE/CMD port
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # depends_on:
+    #   - go-gateway # or your main backend API
+
+  backend:
+    container_name: backend_service
+    build:
+      context: ./apps/backend
     ports:
-      - "3015:3015"
-  dotnet-identity:
-    build: ./services/dotnet-identity
-    ports:
-      - "3006:3006"
-  elixir-messaging:
-    build: ./services/elixir-messaging
-    ports:
-      - "3009:3009"
+      - "8001:8000" # Assuming app runs on port 8000 in container
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # environment:
+    #   - DATABASE_URL=postgresql://user:password@postgres:5432/mydb
+    # depends_on:
+    #   - postgres
+    #   - redis
+
+  #--------------------------------------------------------------------------
+  # Microservices
+  #--------------------------------------------------------------------------
   go-gateway:
-    build: ./services/go-gateway
+    container_name: go_gateway
+    build:
+      context: ./services/go-gateway
     ports:
-      - "3003:3003"
+      - "8081:8080" # Common Go HTTP port
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # depends_on:
+    #   - dotnet-identity
+    #   - redis
+
+  clojure-etl:
+    container_name: clojure_etl
+    build:
+      context: ./services/clojure-etl
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+
+  cpp-hardware:
+    container_name: cpp_hardware
+    build:
+      context: ./services/cpp-hardware
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+
+  crystal-iot:
+    container_name: crystal_iot
+    build:
+      context: ./services/crystal-iot
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # ports:
+    #   - "xxxx:xxxx" # If it exposes a port
+
+  deno-functions:
+    container_name: deno_functions
+    build:
+      context: ./services/deno-functions
+    ports:
+      - "8002:8000" # Deno apps often use 8000
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+
+  dotnet-identity:
+    container_name: dotnet_identity
+    build:
+      context: ./services/dotnet-identity
+    ports:
+      - "5001:5000" # .NET apps often use 5000 or 80
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # environment:
+    #   - ASPNETCORE_ENVIRONMENT=Development
+    #   - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=identitydb;Username=user;Password=password
+    # depends_on:
+    #   - postgres
+
+  elixir-messaging:
+    container_name: elixir_messaging
+    build:
+      context: ./services/elixir-messaging
+    ports:
+      - "4001:4000" # Phoenix default port
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # environment:
+    #   - DATABASE_URL=ecto://user:password@postgres/messagedb
+    #   - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    # depends_on:
+    #   - postgres
+    #   - rabbitmq
+
   haskell-compliance:
-    build: ./services/haskell-compliance
-    ports:
-      - "3012:3012"
+    container_name: haskell_compliance
+    build:
+      context: ./services/haskell-compliance
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+
   java-accounting:
-    build: ./services/java-accounting
+    container_name: java_accounting
+    build:
+      context: ./services/java-accounting
     ports:
-      - "3005:3005"
+      - "8082:8080" # Spring Boot default
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # environment:
+    #   - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/accountingdb
+    #   - SPRING_DATASOURCE_USERNAME=user
+    #   - SPRING_DATASOURCE_PASSWORD=password
+    # depends_on:
+    #   - postgres
+
   kotlin-orders:
-    build: ./services/kotlin-orders
+    container_name: kotlin_orders
+    build:
+      context: ./services/kotlin-orders
     ports:
-      - "3010:3010"
+      - "8083:8080" # Ktor/Spring Boot default
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # environment:
+    #   - DATABASE_URL=jdbc:postgresql://postgres:5432/ordersdb
+    # depends_on:
+    #   - postgres
+
   node-notifications:
-    build: ./services/node-notifications
+    container_name: node_notifications
+    build:
+      context: ./services/node-notifications
     ports:
-      - "3001:3001"
+      - "3001:3000" # Common Node.js port
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # environment:
+    #   - MONGODB_URI=mongodb://mongo:27017/notificationsdb
+    # depends_on:
+    #   - mongo
+
   php-ecommerce:
-    build: ./services/php-ecommerce
+    container_name: php_ecommerce
+    build:
+      context: ./services/php-ecommerce
     ports:
-      - "3004:3004"
+      - "8084:80" # PHP apps served on port 80 in container
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # environment:
+    #   - APP_ENV=development
+    #   - DB_CONNECTION=mysql
+    #   - DB_HOST=mysql
+    #   - DB_PORT=3306
+    #   - DB_DATABASE=ecommercedb
+    #   - DB_USERNAME=root
+    #   - DB_PASSWORD=YOUR_STRONG_PASSWORD
+    # depends_on:
+    #   - mysql
+    #   - redis
+
   python-forecast:
-    build: ./services/python-forecast
+    container_name: python_forecast
+    build:
+      context: ./services/python-forecast
     ports:
-      - "3002:3002"
+      - "5002:5000" # Flask/FastAPI common port
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+
   ruby-crm:
-    build: ./services/ruby-crm
+    container_name: ruby_crm
+    build:
+      context: ./services/ruby-crm
     ports:
-      - "3008:3008"
+      - "4567:4567" # Sinatra default
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # environment:
+    #   - DATABASE_URL=postgres://user:password@postgres:5432/crmdb
+    # depends_on:
+    #   - postgres
+
   rust-analytics:
-    build: ./services/rust-analytics
-    ports:
-      - "3007:3007"
+    container_name: rust_analytics
+    build:
+      context: ./services/rust-analytics
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+
   scala-reporting:
-    build: ./services/scala-reporting
-    ports:
-      - "3011:3011"
+    container_name: scala_reporting
+    build:
+      context: ./services/scala-reporting
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+
   swift-notifications:
-    build: ./services/swift-notifications
+    container_name: swift_notifications
+    build:
+      context: ./services/swift-notifications
     ports:
       - "3017:3017"
-  host:
-    build: ./host
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+
+  #--------------------------------------------------------------------------
+  # Databases
+  #--------------------------------------------------------------------------
+  postgres:
+    container_name: postgres_db
+    build:
+      context: ./dbs/postgres
     ports:
-      - "3000:3000"
-    depends_on:
-      - node-notifications
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: YOUR_STRONG_PASSWORD
+      POSTGRES_DB: myappdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d myappdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mysql:
+    container_name: mysql_db
+    build:
+      context: ./dbs/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: YOUR_STRONG_PASSWORD
+      MYSQL_DATABASE: myappdb
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-pYOUR_STRONG_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo:
+    container_name: mongo_db
+    build:
+      context: ./dbs/mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # For MongoDB 5+
+    healthcheck:
+      test: |
+        mongosh --eval \\
+        'db.adminCommand("ping").ok' \\
+        --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    # For older MongoDB, use:
+    # healthcheck:
+    #   test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+
+  redis:
+    container_name: redis_cache
+    build:
+      context: ./dbs/redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  clickhouse:
+    container_name: clickhouse_db
+    build:
+      context: ./dbs/clickhouse
+    ports:
+      - "8123:8123" # HTTP
+      - "9000:9000" # Native TCP
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # Add ClickHouse specific environment variables if needed, e.g. CLICKHOUSE_USER, CLICKHOUSE_PASSWORD
+    # healthcheck: # ClickHouse healthcheck can be more complex
+    #   test: ["CMD", "curl", "-f", "http://localhost:8123/ping"]
+
+  #--------------------------------------------------------------------------
+  # Tools
+  #--------------------------------------------------------------------------
+  rabbitmq:
+    container_name: rabbitmq_broker
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"  # AMQP
+      - "15672:15672" # Management UI
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    # volumes: # Persist RabbitMQ data if needed
+    #   - rabbitmq_data:/var/lib/rabbitmq
+
+  minio:
+    container_name: minio_storage
+    image: minio/minio:latest
+    ports:
+      - "9000:9000" # API
+      - "9001:9001" # Console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: YOUR_STRONG_PASSWORD_MINIO
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-I", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    container_name: keycloak_identity
+    image: quay.io/keycloak/keycloak:latest
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: YOUR_STRONG_PASSWORD_KEYCLOAK
+      # KC_DB: postgres # Example for external DB
+      # KC_DB_URL_HOST: postgres
+      # KC_DB_URL_DATABASE: keycloakdb
+      # KC_DB_USERNAME: keycloak_user
+      # KC_DB_PASSWORD: YOUR_STRONG_PASSWORD_KEYCLOAK_DB
+      # KC_HOSTNAME: localhost # Set this to your actual hostname for Keycloak to be accessible
+    ports:
+      - "8086:8080"
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    # depends_on: # If using an external DB like postgres
+    #   - postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+
+  meilisearch:
+    container_name: meilisearch_engine
+    image: getmeili/meilisearch:latest
+    ports:
+      - "7700:7700"
+    volumes:
+      - meilisearch_data:/data.ms
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: YOUR_STRONG_MEILI_MASTER_KEY # Optional: set a master key
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 5s
+      timeout: 1s
+      retries: 20
+
+  airflow:
+    container_name: airflow_service
+    build:
+      context: ./tools/airflow
+    ports:
+      - "8085:8080" # Airflow webserver default
+    networks:
+      - micro_services_network
+    restart: unless-stopped
+    volumes: # These are examples, Airflow setup can be complex
+      - airflow_dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
+      - airflow_plugins:/opt/airflow/plugins
+    # environment:
+    #   - AIRFLOW__CORE__EXECUTOR=LocalExecutor # or CeleryExecutor, etc.
+    #   - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    #   - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://user:password@postgres:5432/airflowdb
+    # depends_on:
+    #   - postgres # If using Postgres as backend
+    #   - redis    # If using CeleryExecutor with Redis
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+# Add other tools from the tools/ directory if they have Dockerfiles
+# or use standard images, similar to rabbitmq, minio, etc.
+# For example:
+# superset:
+#   image: amancevice/superset
+#   ports:
+#     - "8088:8088"
+#   # ... more config
+#
+# cms-strapi:
+#   image: strapi/strapi
+#   # ... more config
+#
+# ecommerce-vendure:
+#   # Vendure often has its own docker-compose setup
+#
+# mlflow:
+#   image: ghcr.io/mlflow/mlflow
+#   # ... more config
+#
+# observability (e.g., Prometheus & Grafana):
+#   prometheus:
+#     image: prom/prometheus
+#     # ...
+#   grafana:
+#     image: grafana/grafana
+#     # ...
+#
+# workflow-camunda:
+#   image: camunda/camunda-bpm-platform
+#   # ...
