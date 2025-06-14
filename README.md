@@ -46,6 +46,16 @@ Finally, you'll be able to see our micro frontend overall application on http://
 
 If you prefer to run the entire host inside a container, use the included Dockerfile and service in `docker-compose.yml`.
 
+Before starting the containers you should create a `.env` file with the required
+credentials. A template is provided at `.env.example`:
+
+```bash
+cp .env.example .env
+# edit .env and set secure passwords
+```
+
+After setting your environment variables run:
+
 ```bash
 docker-compose up --build host
 ```

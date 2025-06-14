@@ -285,17 +285,18 @@ services:
       context: ./dbs/postgres
     ports:
       - "5432:5432"
+    env_file: .env
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: YOUR_STRONG_PASSWORD
-      POSTGRES_DB: myappdb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - micro_services_network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d myappdb"]
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -306,16 +307,17 @@ services:
       context: ./dbs/mysql
     ports:
       - "3306:3306"
+    env_file: .env
     environment:
-      MYSQL_ROOT_PASSWORD: YOUR_STRONG_PASSWORD
-      MYSQL_DATABASE: myappdb
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - micro_services_network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-pYOUR_STRONG_PASSWORD"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$MYSQL_ROOT_PASSWORD"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -390,12 +392,13 @@ services:
     ports:
       - "5672:5672"  # AMQP
       - "15672:15672" # Management UI
+    env_file: .env
     networks:
       - micro_services_network
     restart: unless-stopped
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     # volumes: # Persist RabbitMQ data if needed
     #   - rabbitmq_data:/var/lib/rabbitmq
 
@@ -405,9 +408,10 @@ services:
     ports:
       - "9000:9000" # API
       - "9001:9001" # Console
+    env_file: .env
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: YOUR_STRONG_PASSWORD_MINIO
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
@@ -424,9 +428,10 @@ services:
     container_name: keycloak_identity
     image: quay.io/keycloak/keycloak:latest
     command: start-dev
+    env_file: .env
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: YOUR_STRONG_PASSWORD_KEYCLOAK
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       # KC_DB: postgres # Example for external DB
       # KC_DB_URL_HOST: postgres
       # KC_DB_URL_DATABASE: keycloakdb
@@ -455,11 +460,12 @@ services:
       - "7700:7700"
     volumes:
       - meilisearch_data:/data.ms
+    env_file: .env
     networks:
       - micro_services_network
     restart: unless-stopped
     environment:
-      MEILI_MASTER_KEY: YOUR_STRONG_MEILI_MASTER_KEY # Optional: set a master key
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY} # Optional: set a master key
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
       interval: 5s
